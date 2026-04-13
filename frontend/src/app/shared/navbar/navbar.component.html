@@ -1,0 +1,31 @@
+<mat-toolbar class="navbar">
+  <div class="nav-brand" routerLink="/employees" style="cursor:pointer">
+    <div class="brand-logo">
+      <mat-icon>people_alt</mat-icon>
+    </div>
+    <span class="brand-name">EmpTrack</span>
+  </div>
+
+  <span class="spacer"></span>
+
+  <nav class="nav-links">
+    <button mat-button routerLink="/employees" routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>group</mat-icon> Employees
+    </button>
+    <button mat-button routerLink="/employees/add" routerLinkActive="active-link">
+      <mat-icon>person_add</mat-icon> Add Employee
+    </button>
+  </nav>
+
+  <div class="user-section">
+    <span class="username-badge">
+      <mat-icon>account_circle</mat-icon>
+      {{ currentUser?.username }}
+    </span>
+    <button mat-stroked-button class="logout-btn" (click)="logout()" matTooltip="Logout">
+      <mat-icon>logout</mat-icon>
+      Logout
+    </button>
+  </div>
+</mat-toolbar>

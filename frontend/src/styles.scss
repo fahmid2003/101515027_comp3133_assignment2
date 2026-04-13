@@ -1,0 +1,99 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$primary-palette: mat.define-palette(mat.$indigo-palette, 800, 600, 900);
+$accent-palette: mat.define-palette(mat.$light-blue-palette, 700);
+$warn-palette: mat.define-palette(mat.$red-palette);
+
+$theme: mat.define-light-theme((
+  color: (
+    primary: $primary-palette,
+    accent: $accent-palette,
+    warn: $warn-palette
+  ),
+  typography: mat.define-typography-config(
+    $font-family: "'DM Sans', 'Segoe UI', Roboto, sans-serif"
+  ),
+  density: 0
+));
+
+@include mat.all-component-themes($theme);
+
+// ─── Google Fonts ──────────────────────────────────────────────────────────────
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+// ─── Reset & Base ──────────────────────────────────────────────────────────────
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'DM Sans', 'Segoe UI', Roboto, sans-serif;
+  background: #f1f5f9;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ─── Snackbar Styles ───────────────────────────────────────────────────────────
+.success-snack {
+  background: #10b981 !important;
+  color: #fff !important;
+
+  .mat-mdc-snack-bar-action {
+    color: #fff !important;
+  }
+}
+
+.error-snack {
+  background: #ef4444 !important;
+  color: #fff !important;
+
+  .mat-mdc-snack-bar-action {
+    color: #fff !important;
+  }
+}
+
+// ─── Material Overrides ────────────────────────────────────────────────────────
+.mat-mdc-form-field-subscript-wrapper {
+  margin-top: 2px !important;
+}
+
+.mat-mdc-card {
+  --mdc-elevated-card-container-shape: 16px;
+}
+
+.mat-mdc-raised-button {
+  letter-spacing: 0 !important;
+}
+
+.mdc-notched-outline__leading,
+.mdc-notched-outline__trailing,
+.mdc-notched-outline__notch {
+  border-color: #e2e8f0 !important;
+}
+
+.mat-mdc-form-field:hover .mdc-notched-outline__leading,
+.mat-mdc-form-field:hover .mdc-notched-outline__trailing,
+.mat-mdc-form-field:hover .mdc-notched-outline__notch {
+  border-color: #94a3b8 !important;
+}
+
+// ─── Paginator ────────────────────────────────────────────────────────────────
+.mat-mdc-paginator {
+  border-top: 1px solid #f1f5f9;
+}
+
+// ─── Dialog ───────────────────────────────────────────────────────────────────
+.mat-mdc-dialog-container {
+  border-radius: 20px !important;
+}
+
+// ─── Scrollbar ────────────────────────────────────────────────────────────────
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }

@@ -1,0 +1,154 @@
+<div class="page-container">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="56"></mat-spinner>
+    <p>Loading employee details...</p>
+  </div>
+
+  <ng-container *ngIf="!loading && employee">
+    <!-- Page Header -->
+    <div class="page-header">
+      <button mat-icon-button routerLink="/employees" class="back-btn">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-text">
+        <h1>Employee Details</h1>
+        <p>Viewing profile for {{ employee.first_name }} {{ employee.last_name }}</p>
+      </div>
+      <div class="header-actions">
+        <button mat-stroked-button (click)="editEmployee()" class="edit-btn">
+          <mat-icon>edit</mat-icon> Edit
+        </button>
+        <button mat-stroked-button color="warn" (click)="deleteEmployee()" class="delete-btn">
+          <mat-icon>delete</mat-icon> Delete
+        </button>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <!-- Profile Card -->
+      <mat-card class="profile-card">
+        <div class="avatar-section">
+          <div class="avatar-large"
+            [style.background-color]="!employee.employee_photo ? getAvatarColor(employee.first_name) : 'transparent'">
+            <img *ngIf="employee.employee_photo" [src]="employee.employee_photo"
+              [alt]="employee.first_name" (error)="employee.employee_photo = ''">
+            <span *ngIf="!employee.employee_photo">
+              {{ getInitials(employee.first_name, employee.last_name) }}
+            </span>
+          </div>
+          <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
+          <span class="designation-tag">{{ employee.designation }}</span>
+          <span class="dept-chip">{{ employee.department }}</span>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="quick-stats">
+          <div class="stat">
+            <mat-icon>attach_money</mat-icon>
+            <div>
+              <span class="stat-value">{{ employee.salary | salaryCurrency }}</span>
+              <span class="stat-label">Annual Salary</span>
+            </div>
+          </div>
+          <div class="stat">
+            <mat-icon>wc</mat-icon>
+            <div>
+              <span class="stat-value">{{ employee.gender }}</span>
+              <span class="stat-label">Gender</span>
+            </div>
+          </div>
+          <div class="stat">
+            <mat-icon>calendar_today</mat-icon>
+            <div>
+              <span class="stat-value">{{ employee.date_of_joining | date: 'MMM d, y' }}</span>
+              <span class="stat-label">Date of Joining</span>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Info Cards -->
+      <div class="info-cards">
+        <mat-card class="info-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar class="card-icon">contact_mail</mat-icon>
+            <mat-card-title>Contact Information</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="info-row">
+              <mat-icon>email</mat-icon>
+              <div>
+                <label>Email Address</label>
+                <p>{{ employee.email }}</p>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="info-row">
+              <mat-icon>fingerprint</mat-icon>
+              <div>
+                <label>Employee ID</label>
+                <p class="mono">{{ employee._id }}</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="info-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar class="card-icon">business_center</mat-icon>
+            <mat-card-title>Work Information</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="info-row">
+              <mat-icon>business</mat-icon>
+              <div>
+                <label>Department</label>
+                <p>{{ employee.department }}</p>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="info-row">
+              <mat-icon>work</mat-icon>
+              <div>
+                <label>Designation</label>
+                <p>{{ employee.designation }}</p>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="info-row">
+              <mat-icon>event_available</mat-icon>
+              <div>
+                <label>Date of Joining</label>
+                <p>{{ employee.date_of_joining | date: 'MMMM d, y' }}</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="info-card timestamps-card">
+          <mat-card-content>
+            <div class="timestamps">
+              <div class="ts">
+                <mat-icon>add_circle_outline</mat-icon>
+                <div>
+                  <label>Created</label>
+                  <p>{{ employee.createdAt | date: 'medium' }}</p>
+                </div>
+              </div>
+              <div class="ts">
+                <mat-icon>update</mat-icon>
+                <div>
+                  <label>Last Updated</label>
+                  <p>{{ employee.updatedAt | date: 'medium' }}</p>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </ng-container>
+</div>

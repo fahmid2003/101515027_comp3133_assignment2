@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # ─── MongoDB ─────────────────────────────────────────────────────────────────
+  mongodb:
+    image: mongo:6
+    container_name: comp3133_mongodb
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - comp3133_net
+
+  # ─── Mongo Express (DB Admin UI) ──────────────────────────────────────────────
+  mongo-express:
+    image: mongo-express:latest
+    container_name: comp3133_mongo_express
+    restart: unless-stopped
+    ports:
+      - '8081:8081'
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+    depends_on:
+      - mongodb
+    networks:
+      - comp3133_net
+
+  # ─── Backend ─────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: comp3133_backend
+    restart: unless-stopped
+    ports:
+      - '5000:5000'
+    environment:
+      PORT: 5000
+      MONGO_URI: mongodb://mongodb:27017/comp3133_db
+      JWT_SECRET: comp3133_super_secret_jwt_key_change_in_production
+      FRONTEND_URL: http://localhost:4200
+    volumes:
+      - uploads-data:/app/uploads
+    depends_on:
+      - mongodb
+    networks:
+      - comp3133_net
+
+  # ─── Frontend ─────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: comp3133_frontend
+    restart: unless-stopped
+    ports:
+      - '4200:80'
+    depends_on:
+      - backend
+    networks:
+      - comp3133_net
+
+volumes:
+  mongo-data:
+  uploads-data:
+
+networks:
+  comp3133_net:
+    driver: bridge

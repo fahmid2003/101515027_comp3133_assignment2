@@ -1,0 +1,161 @@
+<div class="page-container">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-text">
+      <h1>Employees</h1>
+      <p>{{ totalCount }} {{ totalCount === 1 ? 'employee' : 'employees' }} found</p>
+    </div>
+    <button mat-raised-button color="primary" routerLink="/employees/add" class="add-btn">
+      <mat-icon>person_add</mat-icon>
+      Add Employee
+    </button>
+  </div>
+
+  <!-- Search Bar -->
+  <mat-card class="search-card">
+    <div class="search-row">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search employees...</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [(ngModel)]="searchTerm" (keyup.enter)="onSearch()"
+          placeholder="Enter {{ searchType === 'department' ? 'department' : 'designation' }} name">
+        <button *ngIf="searchTerm" mat-icon-button matSuffix (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="type-field">
+        <mat-label>Search by</mat-label>
+        <mat-select [(ngModel)]="searchType">
+          <mat-option value="department">
+            <mat-icon>business</mat-icon> Department
+          </mat-option>
+          <mat-option value="designation">
+            <mat-icon>work</mat-icon> Position / Designation
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="onSearch()" [disabled]="searchLoading" class="search-btn">
+        <mat-spinner *ngIf="searchLoading" diameter="18"></mat-spinner>
+        <mat-icon *ngIf="!searchLoading">search</mat-icon>
+        Search
+      </button>
+
+      <button mat-stroked-button (click)="loadEmployees()" class="reset-btn" matTooltip="Reset to all employees">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </mat-card>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="56"></mat-spinner>
+    <p>Loading employees...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && dataSource.data.length === 0" class="empty-state">
+    <mat-icon>group_off</mat-icon>
+    <h3>No employees found</h3>
+    <p>{{ searchTerm ? 'Try a different search term.' : 'Add your first employee to get started.' }}</p>
+    <button mat-raised-button color="primary" routerLink="/employees/add" *ngIf="!searchTerm">
+      <mat-icon>person_add</mat-icon> Add Employee
+    </button>
+  </div>
+
+  <!-- Employee Table -->
+  <mat-card class="table-card" *ngIf="!loading && dataSource.data.length > 0">
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="dataSource" matSort class="employee-table">
+
+        <!-- Photo Column -->
+        <ng-container matColumnDef="employee_photo">
+          <th mat-header-cell *matHeaderCellDef>Photo</th>
+          <td mat-cell *matCellDef="let emp">
+            <div class="avatar" [style.background-color]="!emp.employee_photo ? getAvatarColor(emp.first_name) : 'transparent'">
+              <img *ngIf="emp.employee_photo" [src]="emp.employee_photo" [alt]="emp.first_name"
+                (error)="emp.employee_photo = null">
+              <span *ngIf="!emp.employee_photo">{{ getInitials(emp.first_name, emp.last_name) }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="first_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let emp">
+            <div class="name-cell">
+              <span class="full-name">{{ emp.first_name }} {{ emp.last_name }}</span>
+              <span class="email-sub">{{ emp.email }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Email Column (hidden, included in name cell) -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+          <td mat-cell *matCellDef="let emp">{{ emp.email }}</td>
+        </ng-container>
+
+        <!-- Department Column -->
+        <ng-container matColumnDef="department">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Department</th>
+          <td mat-cell *matCellDef="let emp">
+            <span class="dept-chip">{{ emp.department }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Designation Column -->
+        <ng-container matColumnDef="designation">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Designation</th>
+          <td mat-cell *matCellDef="let emp">{{ emp.designation }}</td>
+        </ng-container>
+
+        <!-- Salary Column -->
+        <ng-container matColumnDef="salary">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Salary</th>
+          <td mat-cell *matCellDef="let emp">
+            <span class="salary-badge">{{ emp.salary | salaryCurrency }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Joining Date Column -->
+        <ng-container matColumnDef="date_of_joining">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Joined</th>
+          <td mat-cell *matCellDef="let emp">{{ emp.date_of_joining | date: 'MMM d, y' }}</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let emp">
+            <div class="action-btns">
+              <button mat-icon-button color="primary" (click)="viewEmployee(emp._id)"
+                matTooltip="View Details">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button color="accent" (click)="editEmployee(emp._id)"
+                matTooltip="Edit Employee">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteEmployee(emp)"
+                matTooltip="Delete Employee">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"
+          (click)="viewEmployee(row._id)"></tr>
+      </table>
+    </div>
+
+    <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons
+      aria-label="Select page of employees">
+    </mat-paginator>
+  </mat-card>
+</div>
