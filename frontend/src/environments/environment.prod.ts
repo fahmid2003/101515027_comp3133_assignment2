@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://your-backend-url.com',
-  graphqlUrl: 'https://your-backend-url.com/graphql',
-  uploadUrl: 'https://your-backend-url.com/api/upload'
+  apiUrl: 'https://comp3133-backend-rk3h.onrender.com',
+  graphqlUrl: 'https://comp3133-backend-rk3h.onrender.com/graphql',
+  uploadUrl: 'https://comp3133-backend-rk3h.onrender.com/api/upload'
 };
